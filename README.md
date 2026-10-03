@@ -4,6 +4,34 @@ To bridge your background in fintech data engineering with this ultra-low-latenc
 
 Aero-MDX is a lightweight, zero-copy crypto market data gateway and simulated execution engine, heavily instrumented for AI-driven operational management via an MCP (Model Context Protocol) server.
 
+### Module structure
+
+```bash
+src/
+├── main.rs                 # Initializes memory pools, ring buffers, and spawns/pins threads
+├── config/                 # Startup configuration and CPU core mapping
+├── network/
+│   ├── mod.rs
+│   ├── tcp_stream.rs       # OS-level socket tuning (TCP_NODELAY, quickack)
+│   └── ws_client.rs        # Tokio-based WebSocket ingestion
+├── protocol/
+│   ├── mod.rs
+│   ├── binance.rs          # Exchange-specific schemas
+│   └── zero_copy.rs        # Structs utilizing &'a [u8] and simd-json for parsing
+├── engine/                 # The Hot Path (No Async/Await allowed here)
+│   ├── mod.rs
+│   ├── orderbook.rs        # Array-backed L2 Book (avoiding BTreeMap overhead)
+│   ├── matching.rs         # Simulated execution logic
+│   └── arena.rs            # Custom memory allocator / object pools
+├── ipc/
+│   ├── mod.rs
+│   └── ring_buffer.rs      # SPSC queue wrappers bridging network and engine
+└── telemetry/
+    ├── mod.rs
+    ├── metrics.rs          # Lock-free counters (AtomicUsize) for latency tracking
+    └── mcp_server.rs       # The Agentic interface exposing metrics to LLMs
+```
+
 ### Core Architecture
 
 This project targets the exact intersection of the job description: Tokio-based Rust concurrency, low-latency data handling, cloud deployment, and LLM-assisted workflow automation.

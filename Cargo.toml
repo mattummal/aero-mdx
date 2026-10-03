@@ -4,3 +4,15 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+# Concurrency & IPC
+tokio = { version = "1.36", features = ["full"] }
+rtrb = "0.3"           # Ultra-fast SPSC lock-free ring buffer
+core_affinity = "0.8"  # OS-level thread pinning
+
+# Parsing & Data
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+bytes = "1.5"
+
+# Metrics
+crossbeam-utils = "0.8"
