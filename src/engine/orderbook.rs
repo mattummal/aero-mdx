@@ -22,6 +22,21 @@ impl OrderBook {
             asks: vec![0; MAX_PRICE_LEVELS].try_into().unwrap(),
         }
     }
+
+    /// inline this func aggresively so the compiler
+    /// merges directly into the hot-loop
+    #[inline(always)]
+    pub fn apply_tick(&mut self, tick: &MarketTick) {
+        // direct mapped caching: use modulo to ensure we never panic on out-of-bounds
+        // in PROD: this would be an exact offset calculation
+        let level = (tick.price_ticks as usize) % MAX_PRICE_LEVELS;
+
+        if tick.is_bid {
+            self.bids[level] = tick.size;
+        } else {
+            self.asks[level] = tick.size;
+        }
+    }
 }
 
 
