@@ -4,6 +4,7 @@
 /// Using fixed-point integers for prices to avoid floating-point math overhead 
 /// and precision loss in the hot path.
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy, Default)]
 pub struct MarketTick {
     pub instrument_id: u16,

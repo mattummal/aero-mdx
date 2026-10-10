@@ -8,18 +8,17 @@ use crate::protocol::zero_copy::MarketTick;
 const MAX_PRICE_LEVELS: usize = 1_000_000;
 
 pub struct OrderBook {
-    bids: [u32; MAX_PRICE_LEVELS],
-    asks: [u32; MAX_PRICE_LEVELS],
+    bids: Box<[u32]>,
+    asks: Box<[u32]>,
 }
 
 impl OrderBook {
     pub fn new() -> Self {
-        // use a Box here purely for initilisation so we don't
-        // overflow the stack on startup. Once initialised, the
-        // memory box remains static
+        // Allocate the 4 MB buffers on the heap once during initialization.
+        // During trading, indexing directly into the slice performs no allocations.
         Self {
-            bids: vec![0; MAX_PRICE_LEVELS].try_into().unwrap(),
-            asks: vec![0; MAX_PRICE_LEVELS].try_into().unwrap(),
+            bids: vec![0u32; MAX_PRICE_LEVELS].into_boxed_slice(),
+            asks: vec![0u32; MAX_PRICE_LEVELS].into_boxed_slice(),
         }
     }
 
